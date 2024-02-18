@@ -1,0 +1,3 @@
+PermissionGroupNotification = "Enable Notifications";
+NSCameraUsageDescription = "Enable Camera Access";
+NSPhotoLibraryUsageDescription = "Enable Photo Library Access";
