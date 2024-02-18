@@ -1,0 +1,92 @@
+[tool.poetry]
+name = "euroget"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = ">3.10.12,<4.0"
+flask = "^2.3.3"
+python-dateutil = "^2.8.2"
+requests = "^2.31.0"
+gocardless-pro = "^1.46.0"
+apscheduler = "^3.10.4"
+productionalizingproject-1 = "^0.23.3"
+analysis = "^0.1.7"
+pandas = "^2.1.0"
+postmarker = "^1.0"
+scikit-learn = "^1.3.0"
+onesignal = "^0.1.3"
+joblib = "^1.3.2"
+supabase = "^1.2.0"
+flask-cors = "^4.0.0"
+pyjwt = "^2.1.0"
+sqlalchemy = "^2.0.23"
+pydantic-settings = "^2.0.3"
+asyncpg = "^0.28.0"
+alembic = "^1.12.1"
+fastapi = "^0.104.0"
+uvicorn = "^0.23.2"
+greenlet = "^3.0.3"
+pydantic = {extras = ["email"], version = "^2.5.3"}
+uvloop = "^0.19.0"
+psycopg2 = "^2.9.9"
+prometheus-fastapi-instrumentator = "^6.1.0"
+structlog = "^24.1.0"
+python-json-logger = "^2.0.7"
+sentry-sdk = {extras = ["fastapi"], version = "^1.39.2"}
+pydantic-extra-types = "^2.4.1"
+phonenumbers = "^8.13.27"
+
+
+[tool.poetry.dev-dependencies]
+ruff = "^0.1.7"
+mypy = "^1.8.0"
+safety = "^2.3.5"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.21.1"
+coverage = "^7.3.2"
+faker = "^19.12.0"
+polyfactory = "^2.13.0"
+factory_boy = "^3.3.0"
+pytest-freezegun = "^0.4.2"
+pre-commit = "^3.6.0"
+types-python-dateutil = "^2.8.19.20240106"
+
+[tool.pyright]
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+useLibraryCodeForTypes = true
+
+[tool.ruff]
+# https://beta.ruff.rs/docs/configuration/
+select = ['E', 'W', 'F', 'I', 'B', 'C4', 'ARG', 'SIM']
+line-length = 100
+ignore = ["B904", "C408"]
+exclude = [
+    "src/migrations/versions"
+]
+
+[tool.ruff.per-file-ignores]
+"**/{tests,docs}/*" = ["ARG002"]
+
+[tool.mypy]
+plugins = [
+    "pydantic.mypy"
+]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+concurrency = ["greenlet", "thread"]
+
+[tool.coverage.report]
+omit = [
+    "src/main.py",
+    "*/test*",
+    "**/tests/*"
+]
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

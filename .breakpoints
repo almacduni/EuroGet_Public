@@ -1,0 +1,36 @@
+{
+  "files": {
+    "credit_decision.py": [
+      {
+        "id": "c1f83412-ff5f-49a0-92ae-2b9732798070",
+        "line": 32,
+        "version": 342,
+        "index": 1138
+      }
+    ],
+    "gcwebhooks.py": [
+      {
+        "id": "dcadefe0-5d45-46b5-b54d-15698e696ccf",
+        "line": 19,
+        "version": 3157,
+        "index": 581
+      }
+    ],
+    "history_of_operations.py": [
+      {
+        "id": "fb467e77-493d-4168-b2bf-f6e77233d8fc",
+        "line": 2,
+        "version": 54,
+        "index": 29
+      }
+    ],
+    "membership.py": [
+      {
+        "id": "14093ef9-6fd0-4200-9760-10aeaf77d6af",
+        "line": 23,
+        "version": 1697,
+        "index": 738
+      }
+    ]
+  }
+}

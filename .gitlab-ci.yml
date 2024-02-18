@@ -1,0 +1,102 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+image: docker:24.0.5
+services:
+  - docker:24.0.5-dind
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
+
+  CONTAINER_TEST_IMAGE_PREV: $CI_REGISTRY/euroget/backend/euroget_backend:latest
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY/euroget/backend/euroget_backend:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY/euroget/backend/euroget_backend:$CI_COMMIT_TAG
+
+  POSTGRES_DB: euroget
+  POSTGRES_USER: euroget
+  POSTGRES_PASSWORD: "euroget"
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+
+
+build:
+  stage: build
+  except:
+    - tags
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | grep -o .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CONTAINER_TEST_IMAGE_PREV || true
+    - docker build --cache-from $CONTAINER_TEST_IMAGE_PREV --pull --build-arg BUILDKIT_INLINE_CACHE=1 -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_TEST_IMAGE_PREV
+    - docker push $CONTAINER_TEST_IMAGE_PREV
+
+pytest:
+  image: $CONTAINER_TEST_IMAGE
+  stage: test
+  except:
+    - tags
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+  services:
+    - postgres:16.1-alpine3.19
+  variables:
+    POSTGRES_DB: test_euroget
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: root
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DB_HOST: postgres
+    DB_NAME: test_euroget
+  script:
+    - cp .env.example .env
+    - echo DB_HOST=postgres >> .env
+    - echo DB_NAME=test_euroget >> .env
+    - export PYTHONPATH=$(pwd)/src
+    - python -m pytest --cov-report term --cov=src src
+
+lint:
+  image: $CONTAINER_TEST_IMAGE
+  stage: test
+  except:
+    - tags
+  allow_failure: true
+  script:
+    - ruff src
+
+mypy:
+  image: $CONTAINER_TEST_IMAGE
+  stage: test
+  except:
+    - tags
+  script:
+    - mypy src
+
+safety:
+  image: $CONTAINER_TEST_IMAGE
+  stage: test
+  except:
+    - tags
+  script:
+    # ignore pip, we use it only to install poetry
+    - safety check --ignore=62044
+
+deploy-prod:
+  stage: deploy
+  image: ubuntu
+  only:
+    refs:
+      - main
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://railway.app/install.sh | sh
+    - railway up --environment production --service euroget_backend -d
+

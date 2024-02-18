@@ -1,0 +1,18 @@
+from enum import Enum
+
+
+class EducationLevel(str, Enum):
+    NONE = "NONE"
+    SCHOOL = "SCHOOL"
+    BACHELOR = "BACHELOR"
+    MASTER = "MASTER"
+
+
+class EmploymentType(str, Enum):
+    STUDENT = "STUDENT"
+    UNEMPLOYED = "UNEMPLOYED"
+    ENTREPRENEUR = "ENTREPRENEUR"
+    GOVERNMENT_EMPLOYEE = "GOVERNMENT_EMPLOYEE"
+    PENSIONER = "PENSIONER"
+    COMPANY_EMPLOYEE = "COMPANY_EMPLOYEE"
+    SELF_EMPLOYED = "SELF_EMPLOYED"
